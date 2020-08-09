@@ -1,34 +1,39 @@
-package com.arjun.recipe.recipeList
+package com.arjun.recipe.recipeDetail
 
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
-import androidx.navigation.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.navigation.fragment.navArgs
+import coil.request.LoadRequest
+import coil.transform.RoundedCornersTransformation
 import com.arjun.recipe.R
 import com.arjun.recipe.Resource
 import com.arjun.recipe.base.BaseFragment
-import com.arjun.recipe.databinding.FragmentRecipeListBinding
+import com.arjun.recipe.databinding.FragmentRecipeDetailBinding
 import com.arjun.recipe.model.Recipe
 import com.arjun.recipe.util.viewBinding
+import com.google.android.material.textview.MaterialTextView
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
 @AndroidEntryPoint
-class RecipeListFragment : BaseFragment() {
+class RecipeDetailFragment : BaseFragment() {
 
-    private val binding: FragmentRecipeListBinding by viewBinding(FragmentRecipeListBinding::bind)
+    private val binding: FragmentRecipeDetailBinding by viewBinding(FragmentRecipeDetailBinding::bind)
+    private val args: RecipeDetailFragmentArgs by navArgs()
+    private val viewModel: RecipeDetailViewModel by viewModels()
 
-    private val viewModel: RecipeListViewModel by viewModels()
-    private lateinit var recipeAdapter: RecipeListAdapter
-    private lateinit var recipeList: RecyclerView
-    private lateinit var progressBar: ProgressBar
+    private lateinit var title: MaterialTextView
+    private lateinit var publisherName: MaterialTextView
+    private lateinit var backdrop: ImageView
+    private lateinit var ingredients: MaterialTextView
+    private lateinit var loader: ProgressBar
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -38,6 +43,8 @@ class RecipeListFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Timber.d("onCreate")
+
+        viewModel.getRecipe(args.recipeId)
     }
 
     override fun onCreateView(
@@ -46,49 +53,51 @@ class RecipeListFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View? {
         Timber.d("onCreateView")
-        return inflater.inflate(R.layout.fragment_recipe_list, container, false)
+        return inflater.inflate(R.layout.fragment_recipe_detail, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Timber.d("onViewCreated")
+        Timber.d(args.recipeId)
 
-        recipeList = binding.recipeList
-        progressBar = binding.progressBar
+        title = binding.title
+        backdrop = binding.backdrop
+        publisherName = binding.publisherName
+        ingredients = binding.recipeIngredients
+        loader = binding.loader
 
-        recipeAdapter = RecipeListAdapter(imageLoader, object : Interaction {
-            override fun onItemSelected(position: Int, item: Recipe) {
-                Timber.d("${item.title} at $position")
-                val action =
-                    RecipeListFragmentDirections.actionRecipeListFragmentToRecipeDetailFragment(item.recipeId)
-                requireView().findNavController().navigate(action)
-            }
-        })
-
-        recipeList.apply {
-            layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
-            adapter = recipeAdapter
-        }
-
-        viewModel.searchRecipe("chicken")
-
-        viewModel.recipeList.observe(viewLifecycleOwner) {
+        viewModel.recipe.observe(viewLifecycleOwner) {
 
             when (it) {
                 is Resource.Loading -> {
-                    progressBar.visibility = View.VISIBLE
+                    loader.visibility = View.VISIBLE
                 }
                 is Resource.Success -> {
-                    progressBar.visibility = View.GONE
-                    it.data?.let { list -> recipeAdapter.submitList(list) }
+                    loader.visibility = View.GONE
+                    showRecipe(it.data)
                 }
                 is Resource.Error -> {
-                    progressBar.visibility = View.GONE
+                    loader.visibility = View.GONE
                 }
             }
-
         }
 
+    }
+
+    private fun showRecipe(recipe: Recipe?) {
+        title.text = recipe?.title
+        ingredients.text = recipe?.ingredients?.joinToString(separator = "\n")
+        publisherName.text = "By: ${recipe?.publisher}"
+
+        val request = LoadRequest.Builder(requireContext())
+            .transformations(RoundedCornersTransformation(4f))
+            .data(recipe?.imageUrl)
+            .crossfade(true)
+            .target(backdrop)
+            .build()
+
+        imageLoader.execute(request)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

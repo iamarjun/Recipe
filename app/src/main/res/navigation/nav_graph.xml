@@ -7,6 +7,19 @@
     <fragment
         android:id="@+id/recipeListFragment"
         android:name="com.arjun.recipe.recipeList.RecipeListFragment"
-        android:label="RecipeListFragment" />
+        android:label="RecipeListFragment">
+        <action
+            android:id="@+id/action_recipeListFragment_to_recipeDetailFragment"
+            app:destination="@id/recipeDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/recipeDetailFragment"
+        android:name="com.arjun.recipe.recipeDetail.RecipeDetailFragment"
+        android:label="RecipeDetailFragment">
+        <argument
+            android:name="recipeId"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
 
 </navigation>

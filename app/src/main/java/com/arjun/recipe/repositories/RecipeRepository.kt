@@ -13,4 +13,10 @@ class RecipeRepository @Inject constructor(private val restApi: RestApi) {
         return response.recipes
     }
 
+    suspend fun recipeDetail(recipeId: String): Recipe {
+        Timber.d("Recipe Id: $recipeId")
+        val response = restApi.getRecipe(recipeId)
+        return response.recipe
+    }
+
 }
