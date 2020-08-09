@@ -87,7 +87,7 @@ class RecipeListFragment : BaseFragment() {
             }
         }
 
-        search("chicken")
+        load()
 
         retry.setOnClickListener { recipeAdapter.retry() }
 
@@ -99,10 +99,10 @@ class RecipeListFragment : BaseFragment() {
 
     }
 
-    private fun search(query: String) {
+    private fun load() {
         searchJob?.cancel()
         searchJob = lifecycleScope.launch {
-            viewModel.searchRecipe(query).collectLatest {
+            viewModel.searchRecipe("chicken").collectLatest {
                 recipeAdapter.submitData(it)
             }
         }
