@@ -1,7 +1,7 @@
 package com.arjun.recipe.recipeList
 
 import android.view.ViewGroup
-import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
@@ -12,8 +12,13 @@ class RecipeListAdapter(
     private val imageLoader: ImageLoader,
     private val interaction: Interaction?
 ) :
-    PagingDataAdapter<Recipe, RecyclerView.ViewHolder>(diffCallback) {
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
+    private val differ = AsyncListDiffer(this, diffCallback)
+
+    fun submitList(list: List<Recipe>) {
+        differ.submitList(list)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return RecipeListViewHolder.create(parent, imageLoader, interaction)
@@ -21,7 +26,7 @@ class RecipeListAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (getItemViewType(position)) {
-            R.layout.recipe_item -> (holder as RecipeListViewHolder).bind(getItem(position))
+            R.layout.recipe_item -> (holder as RecipeListViewHolder).bind(differ.currentList[position])
         }
     }
 
@@ -31,7 +36,7 @@ class RecipeListAdapter(
         position: Int,
         payloads: MutableList<Any>
     ) {
-        val item = getItem(position)
+        val item = differ.currentList[position]
         (holder as RecipeListViewHolder).bind(item)
     }
 
@@ -51,5 +56,7 @@ class RecipeListAdapter(
             }
         }
     }
+
+    override fun getItemCount(): Int = differ.currentList.size
 }
 

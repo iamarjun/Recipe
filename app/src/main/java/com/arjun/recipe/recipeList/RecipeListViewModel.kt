@@ -1,30 +1,29 @@
 package com.arjun.recipe.recipeList
 
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
+import androidx.lifecycle.*
+import com.arjun.recipe.Resource
 import com.arjun.recipe.model.Recipe
 import com.arjun.recipe.repositories.RecipeRepository
-import kotlinx.coroutines.flow.Flow
 
 class RecipeListViewModel @ViewModelInject constructor(private val repo: RecipeRepository) :
     ViewModel() {
 
-    private var currentQueryValue: String? = null
+    private val _searchQuery by lazy { MutableLiveData<String>() }
 
-    private var currentSearchResult: Flow<PagingData<Recipe>>? = null
-
-    fun searchRecipe(queryString: String): Flow<PagingData<Recipe>> {
-        val lastResult = currentSearchResult
-        if (queryString == currentQueryValue && lastResult != null) {
-            return lastResult
+    val recipeList: LiveData<Resource<List<Recipe>>> = _searchQuery.switchMap {
+        liveData<Resource<List<Recipe>>> {
+            emit(Resource.Loading(null))
+            try {
+                val list = repo.recipeList(it)
+                emit(Resource.Success(list))
+            } catch (e: Exception) {
+                emit(Resource.Error(e.toString()))
+            }
         }
-        currentQueryValue = queryString
-        val newResult: Flow<PagingData<Recipe>> = repo.recipeList(queryString)
-            .cachedIn(viewModelScope)
-        currentSearchResult = newResult
-        return newResult
+    }
+
+    fun searchRecipe(queryString: String) {
+        _searchQuery.value = queryString
     }
 }
