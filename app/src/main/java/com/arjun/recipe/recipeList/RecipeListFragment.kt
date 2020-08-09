@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
@@ -60,39 +61,29 @@ class RecipeListFragment : BaseFragment() {
         )
 
         recipeAdapter.addLoadStateListener { loadState ->
-            if (loadState.refresh !is LoadState.NotLoading) {
-                // We're refreshing: either loading or we had an error
-                // So we can hide the list
-                binding.recipeList.visibility = View.GONE
-                binding.progressBar.visibility =
-                    if (loadState.refresh is LoadState.Loading) View.VISIBLE else View.GONE
-                binding.retryButton.visibility =
-                    if (loadState.refresh is LoadState.Error) View.VISIBLE else View.GONE
-            } else {
-                // We're not actively refreshing
-                // So we should show the list
-                binding.recipeList.visibility = View.VISIBLE
-                binding.progressBar.visibility = View.GONE
-                binding.retryButton.visibility = View.GONE
-                // If we have an error, show a toast
-                val errorState = when {
-                    loadState.append is LoadState.Error -> {
-                        loadState.append as LoadState.Error
-                    }
-                    loadState.prepend is LoadState.Error -> {
-                        loadState.prepend as LoadState.Error
-                    }
-                    else -> {
-                        null
-                    }
+
+            binding.progressBar.isVisible =
+                loadState.refresh is LoadState.Loading
+            binding.retryButton.isVisible =
+                loadState.refresh is LoadState.Error
+
+            val errorState = when {
+                loadState.append is LoadState.Error -> {
+                    loadState.append as LoadState.Error
                 }
-                errorState?.let {
-                    Toast.makeText(
-                        requireContext(),
-                        "\uD83D\uDE28 Wooops ${it.error}",
-                        Toast.LENGTH_LONG
-                    ).show()
+                loadState.prepend is LoadState.Error -> {
+                    loadState.prepend as LoadState.Error
                 }
+                else -> {
+                    null
+                }
+            }
+            errorState?.let {
+                Toast.makeText(
+                    requireContext(),
+                    "\uD83D\uDE28 Wooops ${it.error}",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
 

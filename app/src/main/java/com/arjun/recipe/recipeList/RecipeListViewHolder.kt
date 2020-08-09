@@ -28,7 +28,7 @@ class RecipeListViewHolder(
     fun bind(item: Recipe?) {
         item?.let { recipe ->
             itemView.setOnClickListener {
-                interaction?.onItemSelected(adapterPosition, recipe)
+                interaction?.onItemSelected(bindingAdapterPosition, recipe)
             }
 
             val request = LoadRequest.Builder(itemView.context)
