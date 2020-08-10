@@ -70,8 +70,6 @@ class RecipeListFragment : BaseFragment() {
             adapter = recipeAdapter
         }
 
-        viewModel.searchRecipe("chicken")
-
         viewModel.recipeList.observe(viewLifecycleOwner) {
 
             when (it) {

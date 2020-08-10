@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
-import com.arjun.recipe.Resource
 import com.arjun.recipe.repositories.RecipeRepository
+import kotlinx.coroutines.flow.collect
 
 class RecipeDetailViewModel @ViewModelInject constructor(private val repo: RecipeRepository) :
     ViewModel() {
@@ -15,11 +15,8 @@ class RecipeDetailViewModel @ViewModelInject constructor(private val repo: Recip
 
     val recipe = _recipeId.switchMap { recipeId ->
         liveData {
-            emit(Resource.Loading(null))
-            try {
-                emit(Resource.Success(repo.recipeDetail(recipeId)))
-            } catch (e: Exception) {
-                emit(Resource.Error(e.toString()))
+            repo.getRecipe(recipeId).collect {
+                emit(it)
             }
         }
     }
