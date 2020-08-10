@@ -7,11 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.navArgs
 import coil.request.LoadRequest
 import coil.transform.RoundedCornersTransformation
+import com.arjun.recipe.MainViewModel
 import com.arjun.recipe.R
 import com.arjun.recipe.Resource
 import com.arjun.recipe.base.BaseFragment
@@ -27,7 +29,7 @@ class RecipeDetailFragment : BaseFragment() {
 
     private val binding: FragmentRecipeDetailBinding by viewBinding(FragmentRecipeDetailBinding::bind)
     private val args: RecipeDetailFragmentArgs by navArgs()
-    private val viewModel: RecipeDetailViewModel by viewModels()
+    private val viewModel: MainViewModel by activityViewModels()
 
     private lateinit var title: MaterialTextView
     private lateinit var publisherName: MaterialTextView

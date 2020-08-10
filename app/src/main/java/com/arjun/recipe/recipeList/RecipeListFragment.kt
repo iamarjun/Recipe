@@ -6,11 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.arjun.recipe.MainViewModel
 import com.arjun.recipe.R
 import com.arjun.recipe.Resource
 import com.arjun.recipe.base.BaseFragment
@@ -25,7 +26,7 @@ class RecipeListFragment : BaseFragment() {
 
     private val binding: FragmentRecipeListBinding by viewBinding(FragmentRecipeListBinding::bind)
 
-    private val viewModel: RecipeListViewModel by viewModels()
+    private val viewModel: MainViewModel by activityViewModels()
     private lateinit var recipeAdapter: RecipeListAdapter
     private lateinit var recipeList: RecyclerView
     private lateinit var progressBar: ProgressBar

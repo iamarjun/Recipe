@@ -59,7 +59,11 @@ class RecipeListViewHolder(
         ): RecipeListViewHolder {
             val view =
                 LayoutInflater.from(parent.context).inflate(R.layout.recipe_item, parent, false)
-            return RecipeListViewHolder(view, imageLoader, interaction)
+            return RecipeListViewHolder(
+                view,
+                imageLoader,
+                interaction
+            )
         }
     }
 }

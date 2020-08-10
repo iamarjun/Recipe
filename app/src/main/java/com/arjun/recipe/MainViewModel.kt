@@ -1,17 +1,22 @@
-package com.arjun.recipe.recipeDetail
+package com.arjun.recipe
 
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
-import androidx.lifecycle.switchMap
+import androidx.lifecycle.*
+import com.arjun.recipe.model.Recipe
 import com.arjun.recipe.repositories.RecipeRepository
 import kotlinx.coroutines.flow.collect
 
-class RecipeDetailViewModel @ViewModelInject constructor(private val repo: RecipeRepository) :
+class MainViewModel @ViewModelInject constructor(private val repo: RecipeRepository) :
     ViewModel() {
 
     private val _recipeId by lazy { MutableLiveData<String>() }
+
+
+    val recipeList: LiveData<Resource<List<Recipe>>> = liveData {
+        repo.getRecipeList().collect {
+            emit(it)
+        }
+    }
 
     val recipe = _recipeId.switchMap { recipeId ->
         liveData {
@@ -24,6 +29,5 @@ class RecipeDetailViewModel @ViewModelInject constructor(private val repo: Recip
     fun getRecipe(recipeId: String?) {
         _recipeId.value = recipeId
     }
-
 
 }
