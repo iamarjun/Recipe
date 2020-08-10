@@ -9,18 +9,19 @@ import kotlinx.coroutines.flow.collect
 class MainViewModel @ViewModelInject constructor(private val repo: RecipeRepository) :
     ViewModel() {
 
+    var isNetworkConnected: Boolean = false
+
     private val _recipeId by lazy { MutableLiveData<String>() }
 
-
     val recipeList: LiveData<Resource<List<Recipe>>> = liveData {
-        repo.getRecipeList().collect {
+        repo.getRecipeList(isNetworkConnected).collect {
             emit(it)
         }
     }
 
     val recipe = _recipeId.switchMap { recipeId ->
         liveData {
-            repo.getRecipe(recipeId).collect {
+            repo.getRecipe(recipeId, isNetworkConnected).collect {
                 emit(it)
             }
         }
