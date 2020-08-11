@@ -13,10 +13,10 @@ class RecipeRepository @Inject constructor(
     private val db: RecipeDatabase
 ) {
 
-    fun getRecipeList(networkConnected: Boolean): Flow<Resource<List<Recipe>>> =
+    fun getRecipeList(recipe: String, networkConnected: Boolean): Flow<Resource<List<Recipe>>> =
         networkBoundResource(
             query = { db.recipeDao.getRecipeListFlow() },
-            fetch = { restApi.searchRecipe("chicken") },
+            fetch = { restApi.searchRecipe(recipe) },
             saveFetchResult = { item -> db.recipeDao.insertRecipeList(item.recipes) },
             shouldFetch = { networkConnected }
         )
