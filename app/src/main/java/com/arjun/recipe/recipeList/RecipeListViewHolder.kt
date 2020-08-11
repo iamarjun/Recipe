@@ -3,7 +3,6 @@ package com.arjun.recipe.recipeList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
@@ -11,6 +10,9 @@ import coil.request.LoadRequest
 import coil.transform.RoundedCornersTransformation
 import com.arjun.recipe.R
 import com.arjun.recipe.model.Recipe
+import com.google.android.material.card.MaterialCardView
+import com.google.android.material.imageview.ShapeableImageView
+import com.google.android.material.shape.CornerFamily
 import kotlinx.android.synthetic.main.recipe_item.view.*
 
 class RecipeListViewHolder(
@@ -21,12 +23,26 @@ class RecipeListViewHolder(
     RecyclerView.ViewHolder(itemView) {
 
     private var title: AppCompatTextView = itemView.recipe_title
-    private var publisher: AppCompatTextView = itemView.recipe_publisher
-    private var socialScore: AppCompatTextView = itemView.recipe_social_rating
-    private var image: AppCompatImageView = itemView.recipe_image
+    private var image: ShapeableImageView = itemView.recipe_image
+    private var root: MaterialCardView = itemView.root
 
     fun bind(item: Recipe?) {
+
+        root.shapeAppearanceModel = root.shapeAppearanceModel
+            .toBuilder()
+            .setTopLeftCorner(CornerFamily.ROUNDED, 300f)
+            .setTopRightCorner(CornerFamily.ROUNDED, 300f)
+            .build()
+
+
         item?.let { recipe ->
+
+            image.shapeAppearanceModel = image.shapeAppearanceModel
+                .toBuilder()
+                .setTopLeftCorner(CornerFamily.ROUNDED, 300f)
+                .setTopRightCorner(CornerFamily.ROUNDED, 300f)
+                .build();
+
             itemView.setOnClickListener {
                 interaction?.onItemSelected(adapterPosition, recipe)
             }
@@ -41,8 +57,6 @@ class RecipeListViewHolder(
             imageLoader.execute(request)
 
             title.text = recipe.title
-            publisher.text = recipe.publisher
-            socialScore.text = recipe.socialRank.toString()
         }
     }
 
