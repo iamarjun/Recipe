@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">Recipe</string>
-    <string name="retry">Retry</string>
+    <string name="ok">OK</string>
 </resources>

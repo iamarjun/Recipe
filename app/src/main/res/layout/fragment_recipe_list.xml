@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -19,12 +20,13 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/retry_button"
-        android:visibility="invisible"
+    <ImageView
+        android:id="@+id/not_found"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="@string/retry" />
+        android:src="@drawable/ic_not_found"
+        android:visibility="invisible"
+        tools:visibility="visible" />
 
 </FrameLayout>

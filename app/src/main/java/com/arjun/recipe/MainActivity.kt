@@ -1,31 +1,29 @@
 package com.arjun.recipe
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkInfo
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
+    private lateinit var connectionLiveData: ConnectionLiveData
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        connectionLiveData = ConnectionLiveData(this)
 
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-
-        viewModel.isNetworkConnected = isNetworkConnected()
+        connectionLiveData.observe(this) {
+            viewModel.setIsNetworkConnected(it)
+        }
+        viewModel.setIsNetworkConnected(isConnected)
 
     }
 
-    private fun isNetworkConnected(): Boolean {
-        val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
-        return activeNetwork?.isConnectedOrConnecting == true
-    }
 }

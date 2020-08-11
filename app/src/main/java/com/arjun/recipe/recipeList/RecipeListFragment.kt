@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.observe
@@ -18,7 +19,6 @@ import com.arjun.recipe.base.BaseFragment
 import com.arjun.recipe.databinding.FragmentRecipeListBinding
 import com.arjun.recipe.model.Recipe
 import com.arjun.recipe.util.viewBinding
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -32,7 +32,7 @@ class RecipeListFragment : BaseFragment() {
     private lateinit var recipeAdapter: RecipeListAdapter
     private lateinit var recipeList: RecyclerView
     private lateinit var progressBar: ProgressBar
-    private lateinit var retry: MaterialButton
+    private lateinit var notFound: ImageView
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -59,7 +59,7 @@ class RecipeListFragment : BaseFragment() {
 
         recipeList = binding.recipeList
         progressBar = binding.progressBar
-        retry = binding.retryButton
+        notFound = binding.notFound
 
         recipeAdapter = RecipeListAdapter(imageLoader, object : Interaction {
             override fun onItemSelected(position: Int, item: Recipe) {
@@ -78,25 +78,43 @@ class RecipeListFragment : BaseFragment() {
         //Hardcoded value for simplicity
         viewModel.getRecipes("chicken")
 
-        retry.setOnClickListener {
-            //Hardcoded value for simplicity
-            viewModel.getRecipes("chicken")
-        }
-
         viewModel.recipeList.observe(viewLifecycleOwner) {
 
             when (it) {
                 is Resource.Loading -> {
+                    notFound.visibility = View.GONE
                     progressBar.visibility = View.VISIBLE
                 }
                 is Resource.Success -> {
+                    notFound.visibility = View.GONE
                     progressBar.visibility = View.GONE
-                    it.data?.let { list -> recipeAdapter.submitList(list) }
+                    it.data?.let { list ->
+
+                        if (list.isNotEmpty())
+                            recipeAdapter.submitList(list)
+                        else {
+                            notFound.visibility = View.VISIBLE
+                            progressBar.visibility = View.GONE
+                            Snackbar.make(
+                                requireView(),
+                                "Something went wrong! Check your Internet connection",
+                                Snackbar.LENGTH_INDEFINITE
+                            )
+                                .setAction(getString(R.string.ok)) { }
+                                .show()
+                        }
+
+                    }
                 }
                 is Resource.Error -> {
-                    retry.visibility = View.VISIBLE
+                    notFound.visibility = View.VISIBLE
                     progressBar.visibility = View.GONE
-                    Snackbar.make(requireView(), "Something went wrong!", Snackbar.LENGTH_SHORT)
+                    Snackbar.make(
+                        requireView(),
+                        "Something went wrong! Check your Internet connection",
+                        Snackbar.LENGTH_INDEFINITE
+                    )
+                        .setAction(getString(R.string.ok)) { }
                         .show()
                 }
             }
