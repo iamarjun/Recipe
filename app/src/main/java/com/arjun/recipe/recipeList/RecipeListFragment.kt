@@ -75,9 +75,6 @@ class RecipeListFragment : BaseFragment() {
             adapter = recipeAdapter
         }
 
-        //Hardcoded value for simplicity
-        viewModel.getRecipes("chicken")
-
         viewModel.recipeList.observe(viewLifecycleOwner) {
 
             when (it) {

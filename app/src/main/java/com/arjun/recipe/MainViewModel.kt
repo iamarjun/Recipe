@@ -11,33 +11,21 @@ class MainViewModel @ViewModelInject constructor(private val repo: RecipeReposit
 
 
     private val _recipeId by lazy { MutableLiveData<String>() }
-    private val _recipe by lazy { MutableLiveData<String>() }
     private val _isNetworkConnected by lazy { MutableLiveData<Boolean>() }
 
-    val recipeList: LiveData<Resource<List<Recipe>>> = _recipe.switchMap { recipe ->
-        _isNetworkConnected.switchMap { isNetworkConnected ->
-            liveData {
-                repo.getRecipeList(recipe, isNetworkConnected).collect {
-                    emit(it)
-                }
-            }
+    val recipeList: LiveData<Resource<List<Recipe>>> = liveData {
+        repo.getRecipeList("chicken", _isNetworkConnected.value ?: false).collect {
+            emit(it)
         }
-
     }
 
     val recipe = _recipeId.switchMap { recipeId ->
-        _isNetworkConnected.switchMap { isNetworkConnected ->
-            liveData {
-                repo.getRecipe(recipeId, isNetworkConnected).collect {
-                    emit(it)
-                }
+        liveData {
+            repo.getRecipe(recipeId, _isNetworkConnected.value ?: false).collect {
+                emit(it)
             }
         }
 
-    }
-
-    fun getRecipes(recipe: String) {
-        _recipe.value = recipe
     }
 
     fun getRecipe(recipeId: String?) {
