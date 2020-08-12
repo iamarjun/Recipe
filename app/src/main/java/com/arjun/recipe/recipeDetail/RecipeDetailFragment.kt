@@ -37,11 +37,6 @@ class RecipeDetailFragment : BaseFragment() {
     private lateinit var ingredients: MaterialTextView
     private lateinit var loader: ProgressBar
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        Timber.d("onAttach")
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Timber.d("onCreate")
@@ -101,45 +96,4 @@ class RecipeDetailFragment : BaseFragment() {
 
         imageLoader.execute(request)
     }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        Timber.d("onActivityCreated")
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Timber.d("onStart")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Timber.d("onResume")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Timber.d("onPause")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Timber.d("onStop")
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        Timber.d("onDestroyView")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Timber.d("onDestroy")
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        Timber.d("onDetach")
-    }
-
 }
