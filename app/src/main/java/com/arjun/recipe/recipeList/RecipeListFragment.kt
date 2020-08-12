@@ -1,6 +1,5 @@
 package com.arjun.recipe.recipeList
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -84,11 +83,9 @@ class RecipeListFragment : BaseFragment() {
                             progressBar.visibility = View.GONE
                             Snackbar.make(
                                 requireView(),
-                                "Something went wrong! Check your Internet connection",
-                                Snackbar.LENGTH_INDEFINITE
-                            )
-                                .setAction(getString(R.string.ok)) { }
-                                .show()
+                                "Something went wrong!",
+                                Snackbar.LENGTH_LONG
+                            ).show()
                         }
 
                     }
@@ -98,11 +95,9 @@ class RecipeListFragment : BaseFragment() {
                     progressBar.visibility = View.GONE
                     Snackbar.make(
                         requireView(),
-                        "Something went wrong! Check your Internet connection",
-                        Snackbar.LENGTH_INDEFINITE
-                    )
-                        .setAction(getString(R.string.ok)) { }
-                        .show()
+                        "Something went wrong!",
+                        Snackbar.LENGTH_LONG
+                    ).show()
                 }
             }
 
